@@ -13,6 +13,7 @@
   "author": "Ozgur SALGINCI",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/pubsub": "^4.1.1",
     "axios": "^0.26.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

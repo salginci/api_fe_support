@@ -8,6 +8,11 @@ const crypto = require('crypto');
 const axios = require("axios") ;
 const http = require('http');
 const https = require("https");
+const {PubSub} = require('@google-cloud/pubsub');
+ 
+const credentials = require('../../pub-publisher.json');
+
+const pubSubClient = new PubSub({ credentials });
 
 
 const { 
@@ -19,7 +24,7 @@ const {
 
 exports.createFeedback = (req, res) => {
 
- 
+ console.log(credentials);
  
 const messageTitle=req.body.messageTitle;
 const messageBody=req.body.messageBody;
@@ -60,19 +65,43 @@ const senderIP=req.socket.remoteAddress;
   // });
 
     
-// Here we assume we saved all the informations to db and now we want to send the email to the user
-// We will use the messageObject to send the email to the user
+ 
+
+
+   const topicNameOrId = process.env.PUBSUBTOPIC;
+   const data = JSON.stringify({
+    mail_to: 'salginci@gmail.com',
+    messageTitle: "Your Message Received",
+    messageBody: "Your Message Received. Our team will contact you soon.",
     
-    const eventkey="MAIL_FEEDBACK";
-    const dataid=feedback.id;
-    const clientguid=req.client.clientguid;
-    const secret=req.client.apisecret;
+  });
 
         
-          
+  sendMessage(topicNameOrId, data).then(()=>{
+    res.status(200).send({success:100});
+  }).catch(err => {
+      console.error(err.message);
+      process.exitCode = 1;
+    });
 
    
 };
+
+async function sendMessage (topicNameOrId , data)   {
+  const dataBuffer = Buffer.from(data);
+  console.log(topicNameOrId)
+
+  try {
+    const messageId = await pubSubClient
+      .topic(topicNameOrId)
+      .publishMessage({data: dataBuffer});
+    console.log(`Message ${messageId} published.`);
+  } catch (error) {
+    console.error(`Received error while publishing: ${error.message}`);
+    process.exitCode = 1;
+  }
+
+}
 
  
 

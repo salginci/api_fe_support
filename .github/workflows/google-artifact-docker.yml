@@ -29,4 +29,4 @@ jobs:
         # Push the artifacts to Artifact Registry
         gcloud artifacts print-settings npm --location=europe-west1 --repository=apis-base
         gcloud auth configure-docker -q
-        docker push europe-west1-docker.pkg.dev/snappy-density-406712/apis-base/api-fe-support:latest
+        docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/apis-base/api-fe-support:latest

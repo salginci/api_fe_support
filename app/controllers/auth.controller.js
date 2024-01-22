@@ -44,7 +44,7 @@ exports.createFeedback = (req, res) => {
  
  
 
-   const topicNameOrId = process.env.PUBSUBTOPIC;
+  // Data we want to pass to the Pub/Sub
    const data = JSON.stringify({
     mail_to: 'mymail@gmail.com',
     messageTitle: "Your Message Received",
@@ -52,7 +52,7 @@ exports.createFeedback = (req, res) => {
     
   });
 
-        
+  const topicNameOrId = process.env.PUBSUBTOPIC;   
   sendMessage(topicNameOrId, data).then(()=>{
     res.status(200).send({success:100});
   }).catch(err => {
@@ -63,6 +63,7 @@ exports.createFeedback = (req, res) => {
    
 };
 
+// The Pub/Sub message handler
 async function sendMessage (topicNameOrId , data)   {
   const dataBuffer = Buffer.from(data);
   console.log(topicNameOrId)

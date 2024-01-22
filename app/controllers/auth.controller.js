@@ -9,10 +9,27 @@ const axios = require("axios") ;
 const http = require('http');
 const https = require("https");
 const {PubSub} = require('@google-cloud/pubsub');
+
+const fs = require('fs');
+const path = require('path');
+
  
-const credentials = require('../../pub-publisher.json');
+
+// This usage is for using key file from local file system
+//const credentials = require('../../pub-publisher.json');
+
+
+// This usage is for using key file from environment variable
+const keyFilePath = '/secrets/key.json';
+const keyFileContent = fs.readFileSync(keyFilePath, 'utf8');
+// Assume 'base64String' contains your base64 encoded data
+const decodedString = Buffer.from(keyFileContent, 'base64').toString('utf8');
+
+const credentials = JSON.parse(decodedString);
+
 
 const pubSubClient = new PubSub({ credentials });
+
 
 
 const { 
@@ -24,55 +41,14 @@ const {
 
 exports.createFeedback = (req, res) => {
 
- console.log(credentials);
  
-const messageTitle=req.body.messageTitle;
-const messageBody=req.body.messageBody;
-const messageEmail=req.body.messageEmail;
-const messageSource=req.body.source;
-const messageSenderID=req.body.senderID;
-const messageTopic=req.body.topic;
-const messageSenderName=req.body.senderName;
-const messageSentToAdmin=0;
-const messageSentToUser=0;
-const messageRead=0;
-const messageAnswered=0;
-const senderIP=req.socket.remoteAddress;
-
-
  
-
-  // Save Contact form  to Database . we do some db work here
-  
-  //const messageObject= await  CustomerMessage.create({
-  //   mesageTitle: mesageTitle,
-    
-
-  //   mesageBody: mesageBody,
-  //   mesageEmail: mesageEmail,
-  //   messageSource: messageSource,
-  //   messageSenderID : messageSenderID,
-  //   messageTopic : messageTopic,
-  //   messageSenderName: messageSenderName,
-  //   messageSentToAdmin:messageSentToAdmin,
-  //   messageSentToUser:messageSentToUser,
-  //   messageRead:messageRead,
-  //   senderIP:senderIP,
-    
-  //   messageAnswered:messageAnswered,
-  //   createdAt: new Date(),
-  
-  // });
-
-    
- 
-
 
    const topicNameOrId = process.env.PUBSUBTOPIC;
    const data = JSON.stringify({
-    mail_to: 'salginci@gmail.com',
+    mail_to: 'mymail@gmail.com',
     messageTitle: "Your Message Received",
-    messageBody: "Your Message Received. Our team will contact you soon.",
+    messageBody: "Your Message Received. Our team will contact you soon.<br/>"+req.body.messageBody
     
   });
 

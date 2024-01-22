@@ -9,7 +9,7 @@ module.exports = function(app) {
     next();
   });
   
-  app.post("/api/v1/createfeedback", [
+  app.post("/createMessage", [
     verifySignUp.checkisValidClient,
    
   ],   controller.createFeedback);
